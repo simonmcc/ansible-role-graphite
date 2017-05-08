@@ -1,0 +1,60 @@
+---
+- name: Lookup OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install EPEL
+  yum: "name=epel-release state=present"
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Graphite Dependencies for Redhat
+  yum: "name={{ item }} state=present enablerepo=epel"
+  with_items: "{{ graphite_pkgs }}"
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Graphite Dependencies for Debian
+  apt: "name={{ item }} state=present update_cache=yes"
+  with_items: "{{ graphite_pkgs }}"
+  when: ansible_os_family == 'Debian'
+
+- file: state=directory path={{ item }}
+  with_items: [ "{{ graphite_target_dir }}", "{{ graphite_repos_dir }}" ]
+
+- name: download graphite packages
+  git: repo=https://github.com/graphite-project/{{ item }}
+       version={{ graphite_version }}
+       dest={{ graphite_repos_dir }}/{{ item }}
+       depth=1
+       force=yes
+  with_items: "{{ graphite_packages }}"
+
+- name: install graphite deps
+  pip: requirements={{ graphite_repos_dir }}/{{ item }}/requirements.txt
+       virtualenv={{ graphite_virtualenv }}
+  with_items: "{{ graphite_packages }}"
+
+- name: install graphite deps (rrdtool python-ldap)
+  pip: name={{ item }} virtualenv={{ graphite_virtualenv }}
+  with_items:
+    - rrdtool
+    - python-ldap
+
+- name: setup graphite apps
+  command: chdir={{graphite_repos_dir }}/{{ item }} {{ graphite_python }} setup.py install
+  with_items: "{{ graphite_packages }}"
+
+# at the install stage, add systemd unit files
+- name: Install carbon systemd stuff
+  template:
+    src: "lib/systemd/system/{{ item }}"
+    dest: "/lib/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - carbon-aggregator.service
+    - carbon-aggregator@.service
+    - carbon-cache.service
+    - carbon-cache@.service
+    - carbon-relay.service
+    - carbon-relay@.service
+

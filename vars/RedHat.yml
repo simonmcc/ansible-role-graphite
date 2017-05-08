@@ -1,0 +1,25 @@
+---
+
+graphite_apache_wsgi_socket_prefix: run/wsgi
+graphite_apache_vhost_name: graphite.conf
+
+graphite_pkgs:
+  - sqlite
+  - pycairo
+  - libfontenc
+  - cairo-devel
+  - libffi-devel
+  - pkgconfig
+  - python-devel
+  - python-pip
+  - python-wheel
+  - python-virtualenv
+  - fontconfig
+  - httpd
+  - mod_wsgi
+  - memcached
+  - rrdtool-devel
+  - openldap-devel
+  - cyrus-sasl-devel
+  - git
+  - gcc

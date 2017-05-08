@@ -1,0 +1,14 @@
+---
+- name: copy example confs to main conf
+  command: chdir={{ graphite_target_dir }}/conf
+           creates={{ graphite_target_dir }}/conf/{{ item }}
+           cp {{ item }}.example {{ item }}
+  with_items: "{{ graphite_carbon_conf_files }}"
+
+- name: setup sqlite
+  command: chdir={{ graphite_target_dir }}/webapp/graphite
+          {{ graphite_python }} /opt/graphite/bin/django-admin.py migrate --settings=graphite.settings
+# sudo -E PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py migrate --settings=graphite.settings
+  environment:
+    PYTHONPATH: "{{ graphite_target_dir }}/webapp"
+
