@@ -42,6 +42,12 @@
   command: chdir={{graphite_repos_dir }}/{{ item }} {{ graphite_python }} setup.py install
   with_items: "{{ graphite_packages }}"
 
+- name: Remove the example confs
+  file:
+    path: "{{ graphite_target_dir }}/conf/{{ item }}.example"
+    state: absent
+  with_items: "{{ graphite_carbon_conf_files }}"
+
 # at the install stage, add systemd unit files
 - name: Install carbon systemd stuff
   template:

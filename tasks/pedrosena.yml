@@ -3,20 +3,17 @@
 - name: Lookup OS specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
-
 - name: Install Graphite Dependencies for Redhat
   yum: "name={{ item }} state=present enablerepo=epel"
   with_items: graphite_pkgs
   when: ansible_os_family == 'RedHat'
-
 
 - name: Install Graphite Dependencies for Debian
   apt: "name={{ item }} state=present update_cache=yes"
   with_items: graphite_pkgs
   when: ansible_os_family == 'Debian'
 
-
-- name: Create PIP requirements file 
+- name: Create PIP requirements file
   copy: src=opt/graphite/requirements.txt dest=/tmp/requirements.txt
 
 
@@ -61,7 +58,7 @@
 
 
 - name: Setup sqlitedb
-  command: /usr/bin/python manage.py syncdb --noinput chdir=/opt/graphite/webapp/graphite 
+  command: /usr/bin/python manage.py syncdb --noinput chdir=/opt/graphite/webapp/graphite
    creates=/opt/graphite/storage/graphite.db
   sudo_user: "{{ apache_user }}"
   register: sqlite_setup
