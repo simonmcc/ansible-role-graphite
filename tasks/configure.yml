@@ -6,9 +6,8 @@
   with_items: "{{ graphite_carbon_conf_files }}"
 
 - name: setup sqlite
-  command: chdir={{ graphite_target_dir }}/webapp/graphite
-          {{ graphite_python }} /opt/graphite/bin/django-admin.py migrate --settings=graphite.settings
-# sudo -E PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py migrate --settings=graphite.settings
+  shell: "{{graphite_python}} {{graphite_target_dir}}/bin/django-admin.py migrate --settings=graphite.settings"
+  args:
+    chdir: "{{graphite_target_dir}}/webapp/graphite"
   environment:
     PYTHONPATH: "{{ graphite_target_dir }}/webapp"
-

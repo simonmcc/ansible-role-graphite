@@ -38,8 +38,17 @@
     - rrdtool
     - python-ldap
 
+# The usual distutils/setuptools bullshit - explicitly install the requirements.txt
+- name: "Install graphite dependencies from requirements.txt"
+  command: "{{graphite_bin}}/pip install -r requirements.txt"
+  args:
+    chdir: "{{graphite_repos_dir }}/{{ item }}"
+  with_items: "{{ graphite_packages }}"
+
 - name: setup graphite apps
-  command: chdir={{graphite_repos_dir }}/{{ item }} {{ graphite_python }} setup.py install
+  command: "{{ graphite_python }} setup.py install"
+  args:
+    chdir: "{{graphite_repos_dir }}/{{ item }}"
   with_items: "{{ graphite_packages }}"
 
 # at the install stage, add systemd unit files

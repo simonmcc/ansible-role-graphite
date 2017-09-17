@@ -1,14 +1,22 @@
 ---
 dependency:
   name: galaxy
+
 driver:
   name: docker
+
 docker:
+  privileged: True
   containers:
     - name: graphite
-      image: ubuntu
+      # CentOS 7 with systemd support
+      image: centos/systemd
       image_version: latest
+      privileged: True
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
       ansible_groups:
         - group1
+
 verifier:
   name: testinfra

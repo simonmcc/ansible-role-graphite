@@ -4,10 +4,12 @@ dependency:
 driver:
   name: vagrant
 vagrant:
+  # Open the Graphite-Web & carbon accessible
+  raw_config_args:
+    - "vm.network 'forwarded_port', guest: 80, host: 8080"
   platforms:
     - name: centos7
-      box: centos/7
-      #box_url: https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
+      box: taskize-9.0.0-centos7-single-nodata
   providers:
     - name: virtualbox
       type: virtualbox

@@ -9,3 +9,4 @@ graphite_pkgs:
   - python-pip
   - python-cairo
   - sqlite3
+  - libxml2-devel     # needed by python-rrdtool
