@@ -1,2 +1,11 @@
 ---
-# tasks file for graphite
+# start the carbon services
+- name: Starting {{ item }} is running
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - carbon-relay
+    - carbon-aggregator
+    - carbon-cache

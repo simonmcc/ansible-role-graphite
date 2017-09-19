@@ -1,12 +1,23 @@
 ---
 - name: copy example confs to main conf
-  command: chdir={{ graphite_target_dir }}/conf
-           creates={{ graphite_target_dir }}/conf/{{ item }}
-           cp {{ item }}.example {{ item }}
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ graphite_target_dir }}/conf/{{ item }}"
   with_items: "{{ graphite_carbon_conf_files }}"
 
+# Setup the Django database
+# PYTHONPATH=${GRAPHITE_HOME}/webapp django-admin.py migrate --noinput --settings=graphite.settings --run-syncdb
+# PYTHONPATH=${GRAPHITE_HOME}/webapp django-admin.py loaddata --settings=graphite.settings initial_data.json
+
 - name: setup sqlite
-  shell: "{{graphite_python}} {{graphite_target_dir}}/bin/django-admin.py migrate --settings=graphite.settings"
+  shell: "{{graphite_python}} {{graphite_target_dir}}/bin/django-admin.py migrate --noinput --settings=graphite.settings --run-syncdb"
+  args:
+    chdir: "{{graphite_target_dir}}/webapp/graphite"
+  environment:
+    PYTHONPATH: "{{ graphite_target_dir }}/webapp"
+
+- name: Load initial graphite-web settings
+  shell: "{{graphite_python}} {{graphite_target_dir}}/bin/django-admin.py loaddata --settings=graphite.settings initial_data.json"
   args:
     chdir: "{{graphite_target_dir}}/webapp/graphite"
   environment:

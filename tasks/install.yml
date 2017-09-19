@@ -51,11 +51,18 @@
     chdir: "{{graphite_repos_dir }}/{{ item }}"
   with_items: "{{ graphite_packages }}"
 
+
 - name: Remove the example confs
+  find:
+    paths: "{{ graphite_target_dir }}/conf/"
+    patterns: "*.conf.example"
+  register: example_config_files
+
+- name: Remove found example config files
   file:
-    path: "{{ graphite_target_dir }}/conf/{{ item }}.example"
+    path: "{{ item.path }}"
     state: absent
-  with_items: "{{ graphite_carbon_conf_files }}"
+  with_items: "{{ example_config_files.files }}"
 
 # at the install stage, add systemd unit files
 - name: Install carbon systemd stuff

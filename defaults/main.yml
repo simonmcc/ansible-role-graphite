@@ -15,6 +15,16 @@ graphite_packages:
   - carbon
   - graphite-web
 
+# TODO: we should probably split these into
+# carbon, graphite-web & whisper config set for clarity
 graphite_carbon_conf_files:
   - carbon.conf
+  - relay-rules.conf
+  - aggregation-rules.conf
+  - whitelist.conf
+  - blacklist.conf
   - storage-schemas.conf
+  - dashboard.conf
+  - graphTemplates.conf
+  - rewrite-rules.conf
+  - storage-aggregation.conf
